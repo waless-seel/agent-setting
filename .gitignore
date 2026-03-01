@@ -1,0 +1,20 @@
+
+#--claude関連--
+
+# 認証・セッション情報
+.claude/auth.json
+.claude/.credentials
+
+# ローカル環境依存
+.claude/settings.json          # MCPパスがマシン依存
+.claude/.session
+
+# プロジェクト固有の自動生成キャッシュ
+.claude/cache/
+.claude/tmp/
+
+#--------
+
+# OS系
+.DS_Store
+Thumbs.db
