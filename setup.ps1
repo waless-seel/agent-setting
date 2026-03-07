@@ -6,7 +6,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$ProjectClaudeDir = Join-Path $ScriptDir '.claude'
+$ProjectClaudeDir = Join-Path $ScriptDir 'claude'
 $UserClaudeDir = Join-Path $HOME '.claude'
 
 function Write-Info  { param($msg) Write-Host "[INFO] $msg" -ForegroundColor Green }

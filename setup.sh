@@ -5,7 +5,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_CLAUDE_DIR="$SCRIPT_DIR/.claude"
+PROJECT_CLAUDE_DIR="$SCRIPT_DIR/claude"
 USER_CLAUDE_DIR="$HOME/.claude"
 
 # カラー出力
