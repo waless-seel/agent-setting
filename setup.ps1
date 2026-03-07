@@ -79,6 +79,39 @@ function Install-Settings {
     }
 }
 
+function Install-ReviewConfig {
+    $configPath = Join-Path $UserClaudeDir 'review-thinking.config'
+
+    if (Test-Path $configPath) {
+        Write-Warn "review-thinking.config は既に存在します: $configPath"
+        Write-Warn "上書きする場合は手動で編集してください"
+        return
+    }
+
+    Write-Host ""
+    Write-Host "review-thinking スキルのレビュー蓄積先を設定します。"
+    Write-Host "複数プロジェクトのレビューをまとめて保存するフォルダを指定してください。"
+    Write-Host "（空のままEnterでデフォルト ~/reviews を使用）"
+    $destInput = Read-Host "reviews 蓄積先フォルダ [デフォルト: ~/reviews]"
+
+    if ([string]::IsNullOrWhiteSpace($destInput)) {
+        $destInput = "~/reviews"
+    }
+
+    $destExpanded = $destInput -replace '^~', $HOME
+    New-Item -ItemType Directory -Force -Path $destExpanded | Out-Null
+
+    @"
+# review-thinking グローバル設定
+# このファイルは ~/.claude/review-thinking.config に配置され、全プロジェクト共通で参照される
+# プロジェクト内の .claude/review-thinking.config があればそちらが優先される
+dest: $destInput
+"@ | Set-Content -Path $configPath -Encoding UTF8
+
+    Write-Info "review-thinking.config を作成しました: $configPath"
+    Write-Info "蓄積先: $destInput"
+}
+
 # メイン処理
 Write-Host '================================================' -ForegroundColor Cyan
 Write-Host ' agent-setting セットアップ' -ForegroundColor Cyan
@@ -93,6 +126,7 @@ Install-Skills
 Install-Commands
 Install-Agents
 Install-Settings
+Install-ReviewConfig
 
 Write-Host ''
 Write-Info 'セットアップ完了！'

@@ -283,23 +283,21 @@ $ProjectDir = if ($env:PROJECT_DIR) { $env:PROJECT_DIR } else { Get-Location }
 2. `thinking.md` を保存
 3. `reproduce.{ext}` を保存
 4. スクリプトが `.sh` の場合は `chmod +x reproduce.sh` で実行権限を付与
-5. `.claude/review-thinking.config` または `--dest` 指定がある場合、`{dest}/{date}-{slug}/` にコピー
 
-### Step 7: 設定ファイルの確認（コピー先）
+`dest` へのコピーは `~/.claude/scripts/copy-review.sh` が PostToolUse フックとして自動実行するため、手動コピーは不要。
 
-`.claude/review-thinking.config` が存在する場合は読み込み、`dest` キーの値をコピー先とする:
+### Step 7: コピー先の確認（参考情報）
+
+コピーは `~/.claude/scripts/copy-review.sh` が PostToolUse フックとして自動実行する。
+スキル側での操作は不要。
+
+設定ファイルの優先順位（フックスクリプトが参照）:
+1. プロジェクト内 `.claude/review-thinking.config` の `dest` キー
+2. グローバル設定 `~/.claude/review-thinking.config` の `dest` キー
 
 ```yaml
-# .claude/review-thinking.config
-dest: ~/my-reviews   # 省略時はプロジェクト内 reviews/ のみ
-```
-
-スキル呼び出し時に `--dest {path}` が引数として渡された場合も同様に扱う。
-（現時点ではユーザーがコマンドとして渡した文字列からパースする）
-
-コピー先が設定されている場合:
-```bash
-cp -r "reviews/{date}-{slug}" "{dest}/{date}-{slug}"
+# ~/.claude/review-thinking.config（setup.sh が生成）
+dest: ~/reviews   # 環境ごとに異なるパスを指定可能
 ```
 
 ### Step 8: 完了レポート
