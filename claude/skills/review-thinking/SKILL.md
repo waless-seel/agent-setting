@@ -286,6 +286,9 @@ $ProjectDir = if ($env:PROJECT_DIR) { $env:PROJECT_DIR } else { Get-Location }
 
 `dest` へのコピーは `~/.claude/scripts/copy-review.sh` が PostToolUse フックとして自動実行するため、手動コピーは不要。
 
+> **注意:** `copy-review.sh` は `reproduce.*` の書き込みをトリガーにコピーを実行する。
+> **thinking.md → reproduce.{ext} の保存順序を変更しないこと。** 順序が逆になると、コピー時に thinking.md が存在しない状態になる。
+
 ### Step 7: コピー先の確認（参考情報）
 
 コピーは `~/.claude/scripts/copy-review.sh` が PostToolUse フックとして自動実行する。
