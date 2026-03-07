@@ -112,6 +112,54 @@ dest: $destInput
     Write-Info "蓄積先: $destInput"
 }
 
+function Install-CopyReviewHook {
+    $scriptsDst = Join-Path $UserClaudeDir 'scripts'
+    $scriptSrc  = Join-Path $ScriptDir 'scripts\copy-review.sh'
+    $settingsFile = Join-Path $UserClaudeDir 'settings.json'
+
+    # スクリプトをコピー
+    New-Item -ItemType Directory -Force -Path $scriptsDst | Out-Null
+    Copy-Item -Force -Path $scriptSrc -Destination (Join-Path $scriptsDst 'copy-review.sh')
+    Write-Info "copy-review.sh をインストールしました: $scriptsDst\copy-review.sh"
+
+    # settings.json にフックを追加（python3 で安全にマージ）
+    $pyScript = @'
+import sys, json, os
+
+settings_path = sys.argv[1]
+hook_command = "bash ~/.claude/scripts/copy-review.sh"
+
+if os.path.exists(settings_path):
+    with open(settings_path, 'r', encoding='utf-8') as f:
+        settings = json.load(f)
+else:
+    settings = {}
+
+hooks = settings.setdefault("hooks", {})
+post_tool_use = hooks.setdefault("PostToolUse", [])
+
+for entry in post_tool_use:
+    for h in entry.get("hooks", []):
+        if h.get("command") == hook_command:
+            print("[WARN] copy-review フックは既に登録済みです", file=sys.stderr)
+            sys.exit(0)
+
+post_tool_use.append({
+    "matcher": "Write",
+    "hooks": [{"type": "command", "command": hook_command}]
+})
+
+with open(settings_path, 'w', encoding='utf-8') as f:
+    json.dump(settings, f, indent=2, ensure_ascii=False)
+    f.write('\n')
+
+print(f"[INFO] copy-review フックを登録しました: {settings_path}", file=sys.stderr)
+'@
+
+    $pyScript | python3 - $settingsFile
+    Write-Info "フック登録完了"
+}
+
 # メイン処理
 Write-Host '================================================' -ForegroundColor Cyan
 Write-Host ' agent-setting セットアップ' -ForegroundColor Cyan
@@ -127,6 +175,7 @@ Install-Commands
 Install-Agents
 Install-Settings
 Install-ReviewConfig
+Install-CopyReviewHook
 
 Write-Host ''
 Write-Info 'セットアップ完了！'
