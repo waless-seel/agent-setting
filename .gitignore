@@ -13,6 +13,9 @@
 .claude/cache/
 .claude/tmp/
 
+# sesion review
+reviews/
+
 #--------
 
 # OS系
