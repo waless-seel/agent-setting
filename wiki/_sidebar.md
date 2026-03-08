@@ -1,8 +1,12 @@
 - [ホーム](/)
 - **ガイド**
   - [アーキテクチャ概要](overview.md)
-  - [スキル詳細](modules/)
+  - **スキル詳細**
+    - [commit](modules/commit.md)
     - [create-git-wiki](modules/create-git-wiki.md)
+    - [review-thinking](modules/review-thinking.md)
+    - [safety-scan](modules/safety-scan.md)
+    - [スクリプト（hooks）](modules/scripts.md)
 - **開発**
   - [コントリビュートガイド](contributing.md)
   - [変更履歴](changelog.md)

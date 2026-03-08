@@ -2,10 +2,57 @@
 
 ## [Unreleased]
 
+## 2026-03-08
+
+### Fixed
+- `fix(hook):` Windowsバックスラッシュパスでcopy-reviewフックが発火しない問題を修正
+  - **コミット:** `584a363`
+  - `copy-review.sh` でパスの `\` を `/` に正規化するよう修正
+
+### Improved
+- `improve(skill):` review-thinkingのStep1bに「推測→実測修正の記録」項目を追加
+  - **コミット:** `84e9491`
+
+### Added
+- `feat(skill):` safety-scanスキル追加
+  - **コミット:** `df90413`
+  - リポジトリまたはステージ済みファイルのシークレット・APIキーをスキャン
+  - スクリプト（`scripts/safety-scan.sh`）+ LLM文脈判断の2段階チェック
+
+- `feat(setup):` copy-review.sh の PostToolUse フックを setup スクリプトに追加
+  - **コミット:** `e59da48`
+
+### Refactored
+- `refactor:` スキルを `.claude/` から `claude/` に移動（クリーンな分離）
+  - **コミット:** `e32c2ff`
+  - `.claude/` はgitignoreされる設定ファイル向け、`claude/` は共有スキル向けに分離
+
+---
+
+## 2026-03-07
+
+### Added
+- `feat(skill):` review-thinkingスキル追加
+  - **コミット:** `cb3bd68`
+  - セッションの思考・判断を `thinking.md` + `reproduce.*` として記録
+  - 構造化メタデータを埋め込み、将来の横断分析に対応
+
+- セットアップスクリプト追加
+  - **コミット:** `dabb254`
+  - `setup.sh`（Linux/macOS/WSL）・`setup.ps1`（Windows）で `~/.claude` に一括インストール
+  - スキル・settings.json・レビュー設定・フックを自動設定
+
+### Improved
+- `improve:` review-thinkingスキルに意思決定ログ・思考ブロックを追加
+  - **コミット:** `06dd4b7`
+
+---
+
 ## 2025-03-07
 
 ### Added
 - `docs:` wiki/ ディレクトリを追加（create-git-wikiスキルで生成）
+  - **コミット:** `bd99741`
   - Docsify形式のwikiサイト
   - GitHub Pages / Netlify / Vercel デプロイ設定
 
@@ -13,17 +60,22 @@
 
 ## 2025年（初期開発）
 
-### sync
-**コミット:** `7136da2`
+### feat: commit スキル追加
+**コミット:** `617b49a`
 
-設定の同期。
+`claude/skills/commit/SKILL.md` を追加。
+
+**スキルの機能:**
+- git変更を分析してConventional Commits形式でコミットメッセージを自動生成
+- ステージング済み・未ステージ変更を一括処理
+- シークレット混入チェック付き
 
 ---
 
 ### feat: create-git-wiki スキル追加
-**コミット:** `a389ff6` （PR #1 `9d31aa6` でマージ）
+**コミット:** `a389ff6`（PR #1 `9d31aa6` でマージ）
 
-`.claude/skills/create-git-wiki/SKILL.md` を追加。
+`claude/skills/create-git-wiki/SKILL.md` を追加。
 
 **スキルの機能:**
 - gitリポジトリのコードベースをAI分析
