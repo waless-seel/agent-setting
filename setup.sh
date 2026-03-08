@@ -107,6 +107,17 @@ install_settings() {
   fi
 }
 
+# safety-scan.sh をインストールする
+install_safety_scan() {
+  local scripts_dst="$USER_CLAUDE_DIR/scripts"
+  local script_src="$SCRIPT_DIR/scripts/safety-scan.sh"
+
+  mkdir -p "$scripts_dst"
+  cp "$script_src" "$scripts_dst/safety-scan.sh"
+  chmod +x "$scripts_dst/safety-scan.sh"
+  info "safety-scan.sh をインストールしました: $scripts_dst/safety-scan.sh"
+}
+
 # copy-review.sh をインストールし、~/.claude/settings.json にフックを登録する
 install_copy_review_hook() {
   local scripts_dst="$USER_CLAUDE_DIR/scripts"
@@ -209,6 +220,7 @@ main() {
   install_agents
   install_settings
   install_review_config
+  install_safety_scan
   install_copy_review_hook
 
   echo ""

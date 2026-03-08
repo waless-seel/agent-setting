@@ -112,6 +112,15 @@ dest: $destInput
     Write-Info "蓄積先: $destInput"
 }
 
+function Install-SafetyScan {
+    $scriptsDst = Join-Path $UserClaudeDir 'scripts'
+    $scriptSrc  = Join-Path $ScriptDir 'scripts\safety-scan.sh'
+
+    New-Item -ItemType Directory -Force -Path $scriptsDst | Out-Null
+    Copy-Item -Force -Path $scriptSrc -Destination (Join-Path $scriptsDst 'safety-scan.sh')
+    Write-Info "safety-scan.sh をインストールしました: $scriptsDst\safety-scan.sh"
+}
+
 function Install-CopyReviewHook {
     $scriptsDst = Join-Path $UserClaudeDir 'scripts'
     $scriptSrc  = Join-Path $ScriptDir 'scripts\copy-review.sh'
@@ -175,6 +184,7 @@ Install-Commands
 Install-Agents
 Install-Settings
 Install-ReviewConfig
+Install-SafetyScan
 Install-CopyReviewHook
 
 Write-Host ''
