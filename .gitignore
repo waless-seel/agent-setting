@@ -7,6 +7,7 @@
 
 # ローカル環境依存
 .claude/settings.json          # MCPパスがマシン依存
+.claude/settings.local.json
 .claude/.session
 
 # プロジェクト固有の自動生成キャッシュ
