@@ -77,6 +77,7 @@ git show {hash} --format="%B" --no-patch | grep "Co-Authored-By"
 - `goal`: ゴールの一行サマリー（英語推奨、aggregate-reviews での機械解析用）
 - `tags`: セッションで扱った技術・操作のタグリスト（例: `git, file-edit, skill-creation, bash`）
 - `outcome`: `success` / `partial` / `failed`
+- `project`: プロジェクトルートのディレクトリ名（例: `agent-setting`）。`copy-review.sh` が自動付与するが、スキルでも同値を埋める
 
 出力ディレクトリ名: `{date}-{slug}`
 
@@ -208,6 +209,7 @@ reproduce スクリプト生成の前に、Step 3 のアクション表と **意
 # goal: {ゴールの一行サマリー}
 # tags: [{タグ1}, {タグ2}, ...]
 # outcome: success | partial | failed
+# project: {プロジェクトルートのディレクトリ名}
 # ============================================================
 #
 # 使い方: bash reproduce.sh
@@ -267,6 +269,7 @@ PowerShell（`.ps1`）の場合のメタデータ形式:
 # goal: {ゴールの一行サマリー}
 # tags: [{タグ1}, {タグ2}, ...]
 # outcome: success | partial | failed
+# project: {プロジェクトルートのディレクトリ名}
 # ============================================================
 #
 # 使い方: pwsh reproduce.ps1

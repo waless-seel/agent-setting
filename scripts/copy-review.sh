@@ -52,7 +52,16 @@ fi
 dest="${dest/#\~/$HOME}"
 
 slug=$(basename "$slug_dir")
+project=$(basename "$project_root")
 mkdir -p "$dest"
 cp -r "$slug_dir" "$dest/$slug"
 
-echo "[copy-review] $slug → $dest/" >&2
+# project フィールドを [REVIEW-META] に追記（未記載の場合のみ）
+for f in "$dest/$slug"/reproduce.*; do
+  [[ -f "$f" ]] || continue
+  if ! grep -q '^# project:' "$f"; then
+    sed -i "s/^# outcome: \(.*\)/# outcome: \1\n# project: $project/" "$f"
+  fi
+done
+
+echo "[copy-review] $slug → $dest/ (project: $project)" >&2
