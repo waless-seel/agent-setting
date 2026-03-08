@@ -16,7 +16,9 @@ file_path=$(echo "$input" | python3 -c "
 import sys, json
 try:
     d = json.load(sys.stdin)
-    print(d.get('tool_input', {}).get('file_path', ''))
+    # Windows バックスラッシュをスラッシュに正規化
+    path = d.get('tool_input', {}).get('file_path', '')
+    print(path.replace('\\\\', '/'))
 except Exception:
     print('')
 " 2>/dev/null)
