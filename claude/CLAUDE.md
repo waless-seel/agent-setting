@@ -11,7 +11,6 @@
 
 ## スキル・設定管理
 - スキルは `claude/skills/` に置き、setup.sh でインストールする（`.claude/skills/` はプロジェクトローカルとして重複読み込みされるため）
-- スキルを編集するときは必ず `claude/skills/` のソースを変更する（`~/.claude/skills/` はインストール先なので直接編集しない）
 - グローバル設定は `~/.claude/<name>.config` に置き、setup.sh でインタラクティブに生成する
 
 @rules/git.md
