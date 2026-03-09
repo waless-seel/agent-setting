@@ -91,11 +91,11 @@ function Install-ReviewConfig {
     Write-Host ""
     Write-Host "review-thinking スキルのレビュー蓄積先を設定します。"
     Write-Host "複数プロジェクトのレビューをまとめて保存するフォルダを指定してください。"
-    Write-Host "（空のままEnterでデフォルト ~/reviews を使用）"
-    $destInput = Read-Host "reviews 蓄積先フォルダ [デフォルト: ~/reviews]"
+    Write-Host "（空のままEnterでデフォルト ~/session-reviews を使用）"
+    $destInput = Read-Host "reviews 蓄積先フォルダ [デフォルト: ~/session-reviews]"
 
     if ([string]::IsNullOrWhiteSpace($destInput)) {
-        $destInput = "~/reviews"
+        $destInput = "~/session-reviews"
     }
 
     $destExpanded = $destInput -replace '^~', $HOME

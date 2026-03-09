@@ -246,10 +246,10 @@ install_review_config() {
   echo "review-thinking スキルのレビュー蓄積先を設定します。"
   echo "複数プロジェクトのレビューをまとめて保存するフォルダを指定してください。"
   echo "（空のままEnterでスキップ）"
-  read -r -p "reviews 蓄積先フォルダ [デフォルト: ~/reviews]: " dest_input
+  read -r -p "reviews 蓄積先フォルダ [デフォルト: ~/session-reviews]: " dest_input
 
   if [[ -z "$dest_input" ]]; then
-    dest_input="$HOME/reviews"
+    dest_input="$HOME/session-reviews"
   fi
 
   # ~ を展開してフォルダを作成
