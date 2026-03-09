@@ -107,6 +107,40 @@ install_settings() {
   fi
 }
 
+# claude/CLAUDE.md を ~/.claude/CLAUDE.md にインストール
+install_global_claude_md() {
+  local src="$PROJECT_CLAUDE_DIR/CLAUDE.md"
+  local dst="$USER_CLAUDE_DIR/CLAUDE.md"
+
+  if [[ ! -f "$src" ]]; then
+    warn "CLAUDE.md が見つかりません: $src"
+    return 0
+  fi
+
+  cp "$src" "$dst"
+  info "CLAUDE.md をインストールしました: $dst"
+}
+
+# claude/rules/*.md を ~/.claude/rules/ にインストール
+install_rules() {
+  local src="$PROJECT_CLAUDE_DIR/rules"
+  local dst="$USER_CLAUDE_DIR/rules"
+
+  if [[ ! -d "$src" ]]; then
+    return 0
+  fi
+
+  mkdir -p "$dst"
+
+  for rule_file in "$src"/*.md; do
+    [[ -f "$rule_file" ]] || continue
+    local name
+    name="$(basename "$rule_file")"
+    cp "$rule_file" "$dst/$name"
+    info "ルール '$name' をインストールしました -> $dst/$name"
+  done
+}
+
 # aggregate-reviews.sh をインストールする
 install_aggregate_reviews() {
   local scripts_dst="$USER_CLAUDE_DIR/scripts"
@@ -255,6 +289,8 @@ main() {
   mkdir -p "$USER_CLAUDE_DIR"
 
   install_skills
+  install_global_claude_md
+  install_rules
   install_commands
   install_agents
   install_settings

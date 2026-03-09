@@ -112,6 +112,33 @@ dest: $destInput
     Write-Info "蓄積先: $destInput"
 }
 
+function Install-GlobalClaudeMd {
+    $src = Join-Path $ProjectClaudeDir 'CLAUDE.md'
+    $dst = Join-Path $UserClaudeDir 'CLAUDE.md'
+
+    if (-not (Test-Path $src)) {
+        Write-Warn "CLAUDE.md が見つかりません: $src"
+        return
+    }
+
+    Copy-Item -Force -Path $src -Destination $dst
+    Write-Info "CLAUDE.md をインストールしました: $dst"
+}
+
+function Install-Rules {
+    $src = Join-Path $ProjectClaudeDir 'rules'
+    $dst = Join-Path $UserClaudeDir 'rules'
+
+    if (-not (Test-Path $src)) { return }
+
+    New-Item -ItemType Directory -Force -Path $dst | Out-Null
+
+    foreach ($file in Get-ChildItem -Path $src -Filter '*.md') {
+        Copy-Item -Force -Path $file.FullName -Destination $dst
+        Write-Info "ルール '$($file.Name)' をインストールしました -> $(Join-Path $dst $file.Name)"
+    }
+}
+
 function Install-SafetyScan {
     $scriptsDst = Join-Path $UserClaudeDir 'scripts'
     $scriptSrc  = Join-Path $ScriptDir 'scripts\safety-scan.sh'
@@ -180,6 +207,8 @@ Write-Host ''
 New-Item -ItemType Directory -Force -Path $UserClaudeDir | Out-Null
 
 Install-Skills
+Install-GlobalClaudeMd
+Install-Rules
 Install-Commands
 Install-Agents
 Install-Settings
