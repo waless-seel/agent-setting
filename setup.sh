@@ -107,6 +107,17 @@ install_settings() {
   fi
 }
 
+# aggregate-reviews.sh をインストールする
+install_aggregate_reviews() {
+  local scripts_dst="$USER_CLAUDE_DIR/scripts"
+  local script_src="$SCRIPT_DIR/scripts/aggregate-reviews.sh"
+
+  mkdir -p "$scripts_dst"
+  cp "$script_src" "$scripts_dst/aggregate-reviews.sh"
+  chmod +x "$scripts_dst/aggregate-reviews.sh"
+  info "aggregate-reviews.sh をインストールしました: $scripts_dst/aggregate-reviews.sh"
+}
+
 # safety-scan.sh をインストールする
 install_safety_scan() {
   local scripts_dst="$USER_CLAUDE_DIR/scripts"
@@ -176,7 +187,24 @@ install_review_config() {
 
   if [[ -f "$config_path" ]]; then
     warn "review-thinking.config は既に存在します: $config_path"
-    warn "上書きする場合は手動で編集してください"
+
+    # agent-setting-path が未設定の場合は追記する
+    if ! grep -q '^agent-setting-path:' "$config_path"; then
+      echo ""
+      echo "aggregate-reviews スキルのために agent-setting リポジトリのパスを設定します。"
+      echo "（空のままEnterでスキップ）"
+      read -r -p "agent-setting リポジトリのパス [デフォルト: ${SCRIPT_DIR}]: " agent_path_input
+
+      if [[ -z "$agent_path_input" ]]; then
+        agent_path_input="$SCRIPT_DIR"
+      fi
+
+      echo "agent-setting-path: ${agent_path_input}" >> "$config_path"
+      info "agent-setting-path を追記しました: $agent_path_input"
+    else
+      warn "agent-setting-path は既に設定済みです。上書きする場合は手動で編集してください"
+    fi
+
     return 0
   fi
 
@@ -194,15 +222,26 @@ install_review_config() {
   local dest_expanded="${dest_input/#\~/$HOME}"
   mkdir -p "$dest_expanded"
 
+  echo ""
+  echo "aggregate-reviews スキルのために agent-setting リポジトリのパスを設定します。"
+  echo "（空のままEnterでスキップ）"
+  read -r -p "agent-setting リポジトリのパス [デフォルト: ${SCRIPT_DIR}]: " agent_path_input
+
+  if [[ -z "$agent_path_input" ]]; then
+    agent_path_input="$SCRIPT_DIR"
+  fi
+
   cat > "$config_path" << EOF
 # review-thinking グローバル設定
 # このファイルは ~/.claude/review-thinking.config に配置され、全プロジェクト共通で参照される
 # プロジェクト内の .claude/review-thinking.config があればそちらが優先される
 dest: ${dest_input}
+agent-setting-path: ${agent_path_input}
 EOF
 
   info "review-thinking.config を作成しました: $config_path"
   info "蓄積先: $dest_input"
+  info "agent-setting パス: $agent_path_input"
 }
 
 main() {
@@ -221,6 +260,7 @@ main() {
   install_settings
   install_review_config
   install_safety_scan
+  install_aggregate_reviews
   install_copy_review_hook
 
   echo ""

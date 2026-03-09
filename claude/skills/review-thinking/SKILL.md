@@ -148,10 +148,18 @@ git show {hash} --format="%B" --no-patch | grep "Co-Authored-By"
 ## 抽出したルール
 
 <!-- aggregate-reviews での横断分析用。確信度が高まったルールをここに蓄積する -->
+<!--
+  scope : global（~/.claude/配下）/ {project-name}（プロジェクトCLAUDE.md）
+  domain: general / git / shell / hook / ... （参照タイミングを示す分野名）
+          global + general  → ~/.claude/CLAUDE.md（常時ロード）
+          global + git      → ~/.claude/rules/git.md
+          global + shell    → ~/.claude/rules/shell.md
+          {project} + *     → {project}/CLAUDE.md
+-->
 
-| パターン | ルール | 根拠（セッション経験） | 確信度 |
-|---------|--------|----------------------|--------|
-| {こういう状況では} | {こうする} | {このセッションの経験} | 低（1回） / 中 / 高 |
+| パターン | ルール | 根拠（セッション経験） | 確信度 | scope | domain |
+|---------|--------|----------------------|--------|-------|--------|
+| {こういう状況では} | {こうする} | {このセッションの経験} | 低（1回） / 中 / 高 | global / {project-name} | general / git / shell / hook / ... |
 
 ## review-thinking スキルへの改善提案
 
