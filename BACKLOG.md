@@ -19,9 +19,10 @@
   - 参照: aggregate-2026-03-09.md セクション E
   - 対応: commit `cdef494` (2026-03-09)
 
-- [ ] **`create-git-wiki` SKILL.md（377行）のスリム化検討**
+- [x] **`create-git-wiki` SKILL.md（377行）のスリム化検討**
   - スクリプト化できるロジックを読んで確認
   - 参照: aggregate-2026-03-09.md セクション F
+  - 対応: commit `c28f560` (2026-03-09)
 
 - [ ] **`review-thinking` SKILL.md テンプレート外出し検討**
   - thinking.md の雛形をファイルに分離してトークン削減できるか検証
