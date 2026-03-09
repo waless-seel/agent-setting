@@ -6,6 +6,8 @@
     - [create-git-wiki](modules/create-git-wiki.md)
     - [review-thinking](modules/review-thinking.md)
     - [safety-scan](modules/safety-scan.md)
+    - [tackle-backlog](modules/tackle-backlog.md)
+    - [aggregate-reviews](modules/aggregate-reviews.md)
     - [スクリプト（hooks）](modules/scripts.md)
 - **開発**
   - [コントリビュートガイド](contributing.md)

@@ -9,12 +9,16 @@ graph TD
     A[agent-setting リポジトリ] --> B[claude/skills/]
     B --> C[commit/SKILL.md]
     B --> D[create-git-wiki/SKILL.md]
+    B --> D2[create-git-wiki/templates/]
     B --> E[review-thinking/SKILL.md]
     B --> F[safety-scan/SKILL.md]
+    B --> G2[tackle-backlog/SKILL.md]
+    B --> H2[aggregate-reviews/SKILL.md]
 
     A --> G[scripts/]
     G --> H[safety-scan.sh]
     G --> I[copy-review.sh]
+    G --> J2[aggregate-reviews.sh]
 
     A --> J[setup.sh / setup.ps1]
 
@@ -53,22 +57,33 @@ agent-setting/
 ├── claude/
 │   └── skills/
 │       ├── commit/
-│       │   └── SKILL.md        # gitコミット自動化
+│       │   └── SKILL.md              # gitコミット自動化
 │       ├── create-git-wiki/
-│       │   └── SKILL.md        # Wiki自動生成
+│       │   ├── SKILL.md              # Wiki自動生成
+│       │   └── templates/            # 静的テンプレートファイル群
+│       │       ├── index.html        # Docsify エントリポイント
+│       │       ├── serve.sh          # ローカルサーバースクリプト
+│       │       ├── deploy-wiki.yml   # GitHub Actions ワークフロー
+│       │       ├── netlify.toml      # Netlify 設定
+│       │       └── vercel.json       # Vercel 設定
 │       ├── review-thinking/
-│       │   └── SKILL.md        # セッションレビュー記録
-│       └── safety-scan/
-│           └── SKILL.md        # シークレットスキャン
+│       │   └── SKILL.md              # セッションレビュー記録
+│       ├── safety-scan/
+│       │   └── SKILL.md              # シークレットスキャン
+│       ├── tackle-backlog/
+│       │   └── SKILL.md              # バックログタスク管理
+│       └── aggregate-reviews/
+│           └── SKILL.md              # レビュー横断分析
 ├── scripts/
-│   ├── copy-review.sh          # PostToolUseフック: レビューを自動コピー
-│   └── safety-scan.sh          # シークレットスキャン本体
-├── setup.sh                    # Linux/macOS/WSL セットアップ
-├── setup.ps1                   # Windows PowerShell セットアップ
-├── wiki/                       # このwikiサイト（Docsify）
+│   ├── copy-review.sh               # PostToolUseフック: レビューを自動コピー
+│   ├── safety-scan.sh               # シークレットスキャン本体
+│   └── aggregate-reviews.sh         # レビュー集計スクリプト
+├── setup.sh                         # Linux/macOS/WSL セットアップ
+├── setup.ps1                        # Windows PowerShell セットアップ
+├── wiki/                            # このwikiサイト（Docsify）
 ├── .github/workflows/
-│   └── deploy-wiki.yml         # GitHub Pages 自動デプロイ
-├── .gitignore                  # Claude認証情報・キャッシュを除外
+│   └── deploy-wiki.yml              # GitHub Pages 自動デプロイ
+├── .gitignore                       # Claude認証情報・キャッシュを除外
 ├── LICENSE
 └── README.md
 ```
@@ -81,6 +96,8 @@ agent-setting/
 | `create-git-wiki` | 「wikiを生成して」 | `wiki/` ディレクトリ |
 | `review-thinking` | `/review-thinking` | `reviews/{slug}/thinking.md` + `reproduce.*` |
 | `safety-scan` | `/safety-scan`, 「シークレット確認」 | スキャンレポート |
+| `tackle-backlog` | `/tackle-backlog`, 「バックログを進めて」 | 実装 + BACKLOG.md 更新 |
+| `aggregate-reviews` | `/aggregate-reviews` | `{dest}/aggregate-{date}.md` |
 
 ## スクリプト・フックの仕組み
 

@@ -2,6 +2,32 @@
 
 ## [Unreleased]
 
+## 2026-03-09
+
+### Added
+- `feat(skill):` tackle-backlog スキルを追加
+  - **コミット:** `8b7a7aa`
+  - BACKLOG.md のタスクを選択・プラン設計・実装・完了マークまで一貫して進める
+
+- `feat(skill):` aggregate-reviews スキルとスクリプトを追加
+  - **コミット:** `eb6b9a5`
+  - セッションレビューを横断分析して改善提案レポートを生成
+
+### Improved
+- `feat(skill):` commit スキルにステージ対象ファイル提示ステップを追加
+  - **コミット:** `752de71`
+  - コミット前にステージ対象ファイルをテキストで提示するよう明示
+
+- `feat(skill):` create-git-wiki のテンプレートファイルを `templates/` に分離
+  - SKILL.md を 377行 → 244行（-35%）にスリム化
+  - `index.html` / `serve.sh` / `deploy-wiki.yml` / `netlify.toml` / `vercel.json` を外出し
+
+### Docs
+- `feat(setup):` CLAUDE.md を `claude/` に移動し `rules/` ディレクトリ構造を追加
+  - **コミット:** `1377b58`
+
+---
+
 ## 2026-03-08
 
 ### Fixed

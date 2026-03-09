@@ -25,6 +25,8 @@
 | [create-git-wiki](modules/create-git-wiki.md) | gitリポジトリをAI分析してDocsify形式のwikiを自動生成 |
 | [review-thinking](modules/review-thinking.md) | セッションの思考・判断を振り返り、再現可能なレビューを記録 |
 | [safety-scan](modules/safety-scan.md) | シークレット・APIキー・.gitignore漏れをスキャン |
+| [tackle-backlog](modules/tackle-backlog.md) | BACKLOG.md の未対応タスクを選択・実装・完了まで一貫して進める |
+| [aggregate-reviews](modules/aggregate-reviews.md) | 蓄積されたセッションレビューを横断分析して改善提案レポートを生成 |
 
 ## クイックスタート
 
@@ -63,6 +65,8 @@ pwsh setup.ps1         # Windows PowerShell
   - [create-git-wiki](modules/create-git-wiki.md)
   - [review-thinking](modules/review-thinking.md)
   - [safety-scan](modules/safety-scan.md)
+  - [tackle-backlog](modules/tackle-backlog.md)
+  - [aggregate-reviews](modules/aggregate-reviews.md)
   - [スクリプト（hooks）](modules/scripts.md)
 - [開発ガイド](contributing.md)
 - [変更履歴](changelog.md)

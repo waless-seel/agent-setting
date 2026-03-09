@@ -150,166 +150,33 @@ sequenceDiagram
 
 ### 4. Docsify セットアップ
 
-`wiki/index.html` を生成する。リポジトリ名・URLは実際の値を設定すること。
-
-```html
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{リポジトリ名} Wiki</title>
-  <link rel="icon" href="https://docsify.js.org/_media/favicon.ico">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
-  <style>
-    :root {
-      --theme-color: #42b983;
-    }
-    .sidebar-nav li > a {
-      font-weight: normal;
-    }
-    .sidebar-nav > ul > li > a {
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-  <div id="app">Loading...</div>
-  <script>
-    window.$docsify = {
-      name: '{リポジトリ名}',
-      repo: '{GitHubリポジトリURL（わかる場合）}',
-      homepage: 'README.md',
-      loadSidebar: true,
-      subMaxLevel: 3,
-      auto2top: true,
-      search: {
-        maxAge: 86400000,
-        paths: 'auto',
-        placeholder: '検索...',
-        noData: '結果なし',
-        depth: 6,
-      },
-      copyCode: {
-        buttonText: 'コピー',
-        errorText: 'エラー',
-        successText: 'コピーしました',
-      },
-      mermaidConfig: {
-        querySelector: '.mermaid',
-      },
-    }
-  </script>
-  <!-- Docsify core -->
-  <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
-  <!-- Plugins -->
-  <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/docsify-copy-code@2/dist/docsify-copy-code.min.js"></script>
-  <!-- Mermaid -->
-  <script src="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/docsify-mermaid@latest/dist/docsify-mermaid.js"></script>
-  <script>mermaid.initialize({ startOnLoad: false });</script>
-</body>
-</html>
-```
+`claude/skills/create-git-wiki/templates/index.html` を Read し、`wiki/index.html` に Write する。
+その際 `{リポジトリ名}` と `{GitHubリポジトリURL（わかる場合）}` を実際の値に置換すること。
 
 `wiki/.nojekyll` を生成する（空ファイルで可）。
 
 ### 5. ローカルサーバースクリプト
 
-`wiki/serve.sh` を生成する:
-
-```bash
-#!/bin/bash
-# wiki ローカルプレビューサーバー
-# 使い方: bash wiki/serve.sh
-
-PORT=${1:-3000}
-
-echo "Wiki を起動しています..."
-echo "ブラウザで http://localhost:${PORT} を開いてください"
-echo "停止するには Ctrl+C を押してください"
-echo ""
-
-cd "$(dirname "$0")"
-
-if command -v python3 &>/dev/null; then
-  python3 -m http.server "$PORT"
-elif command -v python &>/dev/null; then
-  python -m SimpleHTTPServer "$PORT"
-elif command -v npx &>/dev/null; then
-  npx serve . -p "$PORT"
-else
-  echo "エラー: python3 / python / npx のいずれかが必要です"
-  exit 1
-fi
-```
-
-`chmod +x wiki/serve.sh` を実行して実行権限を付与する。
+`claude/skills/create-git-wiki/templates/serve.sh` を Read し、`wiki/serve.sh` に Write する。
+その後 `chmod +x wiki/serve.sh` を実行して実行権限を付与する。
 
 ### 6. 外部ホスティング設定
 
 #### GitHub Pages（`.github/workflows/deploy-wiki.yml`）
 
-```yaml
-name: Deploy Wiki to GitHub Pages
-
-on:
-  push:
-    branches: [main, master]
-    paths:
-      - 'wiki/**'
-  workflow_dispatch:
-
-permissions:
-  contents: write
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./wiki
-          publish_branch: gh-pages
-          force_orphan: true
-```
+`claude/skills/create-git-wiki/templates/deploy-wiki.yml` を Read し、
+`.github/workflows/deploy-wiki.yml` に Write する。
 
 **GitHub Pages 有効化の案内（スキル完了後にユーザーへ伝える）:**
 - リポジトリの Settings → Pages → Source を `gh-pages` ブランチに設定
 
 #### Netlify（`wiki/netlify.toml`）
 
-```toml
-[build]
-  publish = "."
-
-[[headers]]
-  for = "/*"
-  [headers.values]
-    Cache-Control = "public, max-age=3600"
-```
+`claude/skills/create-git-wiki/templates/netlify.toml` を Read し、`wiki/netlify.toml` に Write する。
 
 #### Vercel（`wiki/vercel.json`）
 
-```json
-{
-  "outputDirectory": ".",
-  "trailingSlash": true,
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=3600" }
-      ]
-    }
-  ]
-}
-```
+`claude/skills/create-git-wiki/templates/vercel.json` を Read し、`wiki/vercel.json` に Write する。
 
 ### 7. コミット＆プッシュ
 
