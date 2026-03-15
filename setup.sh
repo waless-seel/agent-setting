@@ -144,7 +144,7 @@ install_rules() {
 # aggregate-reviews.sh をインストールする
 install_aggregate_reviews() {
   local scripts_dst="$USER_CLAUDE_DIR/scripts"
-  local script_src="$SCRIPT_DIR/scripts/aggregate-reviews.sh"
+  local script_src="$PROJECT_CLAUDE_DIR/skills/aggregate-reviews/scripts/aggregate-reviews.sh"
 
   mkdir -p "$scripts_dst"
   cp "$script_src" "$scripts_dst/aggregate-reviews.sh"
@@ -155,7 +155,7 @@ install_aggregate_reviews() {
 # safety-scan.sh をインストールする
 install_safety_scan() {
   local scripts_dst="$USER_CLAUDE_DIR/scripts"
-  local script_src="$SCRIPT_DIR/scripts/safety-scan.sh"
+  local script_src="$PROJECT_CLAUDE_DIR/skills/safety-scan/scripts/safety-scan.sh"
 
   mkdir -p "$scripts_dst"
   cp "$script_src" "$scripts_dst/safety-scan.sh"
@@ -166,7 +166,7 @@ install_safety_scan() {
 # copy-review.sh をインストールし、~/.claude/settings.json にフックを登録する
 install_copy_review_hook() {
   local scripts_dst="$USER_CLAUDE_DIR/scripts"
-  local script_src="$SCRIPT_DIR/scripts/copy-review.sh"
+  local script_src="$PROJECT_CLAUDE_DIR/skills/review-thinking/scripts/copy-review.sh"
   local settings_file="$USER_CLAUDE_DIR/settings.json"
 
   # スクリプトをコピー
