@@ -41,7 +41,7 @@ install_skills() {
       info "スキル '$skill_name' をインストールします..."
     fi
 
-    cp -r "$skill_dir" "$dst/"
+    cp -r "${skill_dir%/}" "$dst/"
     info "  -> $target"
   done
 }
