@@ -141,7 +141,7 @@ function Install-Rules {
 
 function Install-SafetyScan {
     $scriptsDst = Join-Path $UserClaudeDir 'scripts'
-    $scriptSrc  = Join-Path $ScriptDir 'scripts\safety-scan.sh'
+    $scriptSrc  = Join-Path $ProjectClaudeDir 'skills\safety-scan\scripts\safety-scan.sh'
 
     New-Item -ItemType Directory -Force -Path $scriptsDst | Out-Null
     Copy-Item -Force -Path $scriptSrc -Destination (Join-Path $scriptsDst 'safety-scan.sh')
@@ -150,7 +150,7 @@ function Install-SafetyScan {
 
 function Install-CopyReviewHook {
     $scriptsDst = Join-Path $UserClaudeDir 'scripts'
-    $scriptSrc  = Join-Path $ScriptDir 'scripts\copy-review.sh'
+    $scriptSrc  = Join-Path $ProjectClaudeDir 'skills\review-thinking\scripts\copy-review.sh'
     $settingsFile = Join-Path $UserClaudeDir 'settings.json'
 
     # スクリプトをコピー
