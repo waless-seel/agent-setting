@@ -171,7 +171,13 @@ C・E の未反映提案をユーザーに1件ずつ提示:
 > 「`{対象ファイル}` を以下の内容で改修しますか？
 >   {改修内容}」
 
-承認時: 対象ファイルを Edit ツールで修正。
+承認時:
+- 対象ファイルを `{agent-setting-path}/claude/skills/{skill-name}/SKILL.md` に解決して Edit ツールで修正する
+  - `{agent-setting-path}` は Step 1 で取得済みの値を使用する
+- 編集後、インストール先に同期する:
+  ```bash
+  cp {agent-setting-path}/claude/skills/{skill}/SKILL.md ~/.claude/skills/{skill}/SKILL.md
+  ```
 
 ### 5-4: 新規スキル・スクリプトの追加
 

@@ -363,9 +363,30 @@ thinking.md の以下2つの改善提案セクションを確認する:
    >   内容: {改善案の概要}」
 
 各提案について:
-- 承認された場合 → 対象ファイルを直接編集して提案を反映し、thinking.md の反映状況を「反映済み」に更新する
-- 拒否された場合 → thinking.md の反映状況を「却下（理由）」に更新して完了とする
-- スキップした場合 → 「未反映」のままとする
+
+**承認された場合:**
+
+1. **agent-setting-path の取得**
+   ```bash
+   cat ~/.claude/review-thinking.config
+   ```
+   `agent-setting-path:` の値を読み取る。取得できない場合は:
+   > 「`~/.claude/review-thinking.config` に `agent-setting-path:` が設定されていません。
+   >   agent-setting リポジトリで `bash setup.sh` を再実行してください。」
+
+2. **ソースファイルを編集**
+   対象ファイルを `{agent-setting-path}/claude/skills/{skill-name}/SKILL.md` に解決して Edit する。
+   - 解決例: thinking.md の「対象ファイル」列が `review-thinking` や `review-thinking/SKILL.md` → `{agent-setting-path}/claude/skills/review-thinking/SKILL.md`
+
+3. **インストール先に同期**
+   ```bash
+   cp {agent-setting-path}/claude/skills/{skill}/SKILL.md ~/.claude/skills/{skill}/SKILL.md
+   ```
+   編集後に thinking.md の反映状況を「反映済み」に更新する。
+
+**拒否された場合** → thinking.md の反映状況を「却下（理由）」に更新して完了とする
+
+**スキップした場合** → 「未反映」のままとする
 
 これにより、review-thinking スキルは実行のたびに自己改善できる。
 
