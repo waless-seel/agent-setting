@@ -178,6 +178,7 @@ C・E の未反映提案をユーザーに1件ずつ提示:
   ```bash
   cp {agent-setting-path}/claude/skills/{skill}/SKILL.md ~/.claude/skills/{skill}/SKILL.md
   ```
+- 提案元の `{dest}/{slug}/thinking.md` を Edit し、当該提案行の `反映状況` セルを `反映済み（{YYYY-MM-DD}）` に更新する
 
 ### 5-4: 新規スキル・スクリプトの追加
 

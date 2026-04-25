@@ -36,7 +36,7 @@
   - 参照: このセッションの設計議論
   - 対応: commit `c69419e` (2026-03-09) — `rejected-rules.md` による却下履歴管理を SKILL.md に実装
 
-- [ ] **`aggregate-reviews` でスキル改善提案を agent-setting に自動反映**
+- [x] **`aggregate-reviews` でスキル改善提案を agent-setting に自動反映**
   - 背景: `review-thinking` の Step 9 でスキル改善が承認されると
     `~/.claude/skills/` (インストール先) を直接編集するが、
     ソースである agent-setting リポジトリへの反映は手動になっている
@@ -47,3 +47,6 @@
     - review-thinking の Step 9 では `~/.claude/skills/` への直接編集をやめ、
       agent-setting 経由に一本化することも検討
   - 参照: UnityIndexer セッションレビュー 2026-03-15
+  - 対応: commit `{hash}` (2026-04-25)
+    - aggregate-reviews SKILL.md Step 5-3 に thinking.md 反映状況更新ステップを追加
+    - session-reviews 内の stale 未反映エントリを反映済みにバックフィル（4件）
