@@ -47,6 +47,6 @@
     - review-thinking の Step 9 では `~/.claude/skills/` への直接編集をやめ、
       agent-setting 経由に一本化することも検討
   - 参照: UnityIndexer セッションレビュー 2026-03-15
-  - 対応: commit `{hash}` (2026-04-25)
+  - 対応: commit `7604706` (2026-04-25)
     - aggregate-reviews SKILL.md Step 5-3 に thinking.md 反映状況更新ステップを追加
     - session-reviews 内の stale 未反映エントリを反映済みにバックフィル（4件）
