@@ -59,8 +59,9 @@ git show {hash} --format="%B" --no-patch | grep -e "Co-Authored-By"
 - **LLM実行コミット** → author 名が AI エージェント名、または Co-Authored-By あり
 - **人間実行コミット** → 上記に当てはまらない（`要人間判断` として記録）
 
-> **注意**: Co-Authored-By の付与はツールやルール設定に依存するため必須ではない。
-> author 名を主判別基準とし、Co-Authored-By は補助的に参照する。
+> **注意**: Claude Code のデフォルト git 設定では author 名が `Test User` になる場合があり、
+> author 名だけでは LLM 実行コミットと判別できないことがある。
+> その場合は Co-Authored-By を主判定基準として使う。
 
 #### Step 1b: 会話コンテキストとの照合
 
@@ -349,46 +350,15 @@ bash reviews/{slug}/reproduce.sh
 reviews/ ディレクトリ内のレビュー数: {件数}
 ```
 
-### Step 9: SKILL.md へのフィードバック（任意）
+### Step 9: 改善提案の記録確認
 
-thinking.md の以下2つの改善提案セクションを確認する:
+thinking.md の以下2つのセクションに提案が正しく記録されていることを確認する:
 
-1. **review-thinking スキルへの改善提案** — 提案がある場合、ユーザーに確認する:
-   > 「review-thinking SKILL.md への改善提案があります。反映しますか？
-   >   対象: {ステップ名}
-   >   内容: {改善案の概要}」
+1. **review-thinking スキルへの改善提案**
+2. **その他設定・スキルへの改善提案**
 
-2. **その他設定・スキルへの改善提案** — 提案がある場合、ユーザーに確認する:
-   > 「{対象ファイル} への改善提案があります。反映しますか？
-   >   内容: {改善案の概要}」
-
-各提案について:
-
-**承認された場合:**
-
-1. **agent-setting-path の取得**
-   ```bash
-   cat ~/.claude/review-thinking.config
-   ```
-   `agent-setting-path:` の値を読み取る。取得できない場合は:
-   > 「`~/.claude/review-thinking.config` に `agent-setting-path:` が設定されていません。
-   >   agent-setting リポジトリで `bash setup.sh` を再実行してください。」
-
-2. **ソースファイルを編集**
-   対象ファイルを `{agent-setting-path}/claude/skills/{skill-name}/SKILL.md` に解決して Edit する。
-   - 解決例: thinking.md の「対象ファイル」列が `review-thinking` や `review-thinking/SKILL.md` → `{agent-setting-path}/claude/skills/review-thinking/SKILL.md`
-
-3. **インストール先に同期**
-   ```bash
-   cp {agent-setting-path}/claude/skills/{skill}/SKILL.md ~/.claude/skills/{skill}/SKILL.md
-   ```
-   編集後に thinking.md の反映状況を「反映済み」に更新する。
-
-**拒否された場合** → thinking.md の反映状況を「却下（理由）」に更新して完了とする
-
-**スキップした場合** → 「未反映」のままとする
-
-これにより、review-thinking スキルは実行のたびに自己改善できる。
+提案がある場合は `反映状況` を `未反映` として記録するのみ。
+**このセッションでは反映しない。** 採否・実施は `aggregate-reviews` スキルで一括判断する。
 
 ## 注意事項
 
