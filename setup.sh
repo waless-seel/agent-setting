@@ -165,13 +165,8 @@ install_codex_config() {
     return 0
   fi
 
-  if [[ -f "$CODEX_DIR/config.toml" ]]; then
-    warn "Codex: config.toml は既に存在するためスキップします: $CODEX_DIR/config.toml"
-    warn "手動でマージしてください: $config_src"
-  else
-    cp "$config_src" "$CODEX_DIR/config.toml"
-    info "Codex: config.toml をインストールしました: $CODEX_DIR/config.toml"
-  fi
+  cp "$config_src" "$CODEX_DIR/config.toml"
+  info "Codex: config.toml をインストールしました: $CODEX_DIR/config.toml"
 }
 
 # src/codex/hooks.json を ~/.codex/hooks.json にマージ

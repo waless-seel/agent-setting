@@ -197,13 +197,8 @@ function Install-CodexConfig {
     if (-not (Test-Path $configSrc)) { return }
 
     $configDst = Join-Path $CodexDir 'config.toml'
-    if (Test-Path $configDst) {
-        Write-Warn "Codex: config.toml は既に存在するためスキップします: $configDst"
-        Write-Warn "手動でマージしてください: $configSrc"
-    } else {
-        Copy-Item -Force -Path $configSrc -Destination $configDst
-        Write-Info "Codex: config.toml をインストールしました: $configDst"
-    }
+    Copy-Item -Force -Path $configSrc -Destination $configDst
+    Write-Info "Codex: config.toml をインストールしました: $configDst"
 }
 
 function Install-CodexHooks {
