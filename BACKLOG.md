@@ -39,6 +39,11 @@
   - safety-scan スキルのスクリプト参照をスキル同梱パスに修正し `Install-SafetyScan` を削除
   - 対応: commit `9540835` (2026-05-04)
 
+- [ ] **`review-thinking` スキルの Codex 移植**
+  - 概要: `~/.claude/review-thinking.config`・`copy-review.sh` フック依存を Codex 向けに解決
+  - 検討点: config ファイルの置き場所（`~/.codex/review-thinking.config` 等）、フック不要な代替フロー
+  - 参照: Codex スキル移植セッション 2026-05-04
+
 ## aggregate-reviews 改善
 
 - [x] **却下ルールの再登場抑止の仕組みを検討**
