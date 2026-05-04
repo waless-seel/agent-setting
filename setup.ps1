@@ -84,7 +84,25 @@ function Install-ReviewConfig {
 
     if (Test-Path $configPath) {
         Write-Warn "review-thinking.config は既に存在します: $configPath"
-        Write-Warn "上書きする場合は手動で編集してください"
+
+        # agent-setting-path が未設定の場合は追記する
+        $content = Get-Content -Path $configPath
+        if (-not ($content -match '^agent-setting-path:')) {
+            Write-Host ""
+            Write-Host "aggregate-reviews スキルのために agent-setting リポジトリのパスを設定します。"
+            Write-Host "（空のままEnterでスキップ）"
+            $agentPathInput = Read-Host "agent-setting リポジトリのパス [デフォルト: $ScriptDir]"
+
+            if ([string]::IsNullOrWhiteSpace($agentPathInput)) {
+                $agentPathInput = $ScriptDir
+            }
+
+            "`nagent-setting-path: $agentPathInput" | Add-Content -Path $configPath
+            Write-Info "agent-setting-path を追記しました: $agentPathInput"
+        } else {
+            Write-Warn "agent-setting-path は既に設定済みです。上書きする場合は手動で編集してください"
+        }
+
         return
     }
 
@@ -101,15 +119,26 @@ function Install-ReviewConfig {
     $destExpanded = $destInput -replace '^~', $HOME
     New-Item -ItemType Directory -Force -Path $destExpanded | Out-Null
 
+    Write-Host ""
+    Write-Host "aggregate-reviews スキルのために agent-setting リポジトリのパスを設定します。"
+    Write-Host "（空のままEnterでスキップ）"
+    $agentPathInput = Read-Host "agent-setting リポジトリのパス [デフォルト: $ScriptDir]"
+
+    if ([string]::IsNullOrWhiteSpace($agentPathInput)) {
+        $agentPathInput = $ScriptDir
+    }
+
     @"
 # review-thinking グローバル設定
 # このファイルは ~/.claude/review-thinking.config に配置され、全プロジェクト共通で参照される
 # プロジェクト内の .claude/review-thinking.config があればそちらが優先される
 dest: $destInput
+agent-setting-path: $agentPathInput
 "@ | Set-Content -Path $configPath -Encoding UTF8
 
     Write-Info "review-thinking.config を作成しました: $configPath"
     Write-Info "蓄積先: $destInput"
+    Write-Info "agent-setting パス: $agentPathInput"
 }
 
 function Install-GlobalClaudeMd {
