@@ -149,6 +149,41 @@ install_knowledge() {
   done
 }
 
+# src/skills/ を ~/.codex/skills/ にインストールし、SKILL.md のパスを Codex 用に調整する
+install_codex_skills() {
+  local src="$PROJECT_CLAUDE_DIR/skills"
+  local dst="$CODEX_DIR/skills"
+
+  if [[ ! -d "$src" ]]; then
+    return 0
+  fi
+
+  mkdir -p "$dst"
+
+  for skill_dir in "$src"/*/; do
+    local name
+    name="$(basename "$skill_dir")"
+    local target="$dst/$name"
+
+    if [[ -d "$target" ]]; then
+      warn "Codex スキル '$name' は既に存在します。上書きします..."
+      rm -rf "$target"
+    else
+      info "Codex スキル '$name' をインストールします..."
+    fi
+
+    cp -r "${skill_dir%/}" "$dst/"
+
+    # SKILL.md 内の ~/.claude/skills/ を ~/.codex/skills/ に書き換え
+    local skill_md="$target/SKILL.md"
+    if [[ -f "$skill_md" ]]; then
+      sed -i 's|~/\.claude/skills/|~/.codex/skills/|g' "$skill_md"
+    fi
+
+    info "  -> $target"
+  done
+}
+
 # src/AGENTS.md と src/codex/config.toml を ~/.codex/ にインストール
 install_codex_config() {
   local agents_src="$PROJECT_CLAUDE_DIR/AGENTS.md"
@@ -343,6 +378,7 @@ main() {
   install_settings
   install_review_config
   install_copy_review_hook
+  install_codex_skills
   install_codex_config
   install_codex_hooks
 

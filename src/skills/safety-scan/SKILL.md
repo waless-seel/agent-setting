@@ -22,10 +22,10 @@ description: >
 
 ```bash
 # repo モードの場合
-bash ~/.claude/scripts/safety-scan.sh repo
+bash ~/.claude/skills/safety-scan/scripts/safety-scan.sh repo
 
 # staged モードの場合
-bash ~/.claude/scripts/safety-scan.sh staged
+bash ~/.claude/skills/safety-scan/scripts/safety-scan.sh staged
 ```
 
 - 終了コード 0 = 候補なし → Step 4 へ（OK レポート）

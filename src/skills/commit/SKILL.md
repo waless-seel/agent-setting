@@ -84,7 +84,7 @@ git add {ファイル1} {ファイル2} ...
 git commit -m "$(cat <<'EOF'
 {type}({scope}): {概要}
 
-Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+Ai-Generated: true
 EOF
 )"
 

@@ -175,13 +175,37 @@ function Install-Knowledge {
     }
 }
 
-function Install-SafetyScan {
-    $scriptsDst = Join-Path $UserClaudeDir 'scripts'
-    $scriptSrc  = Join-Path $ProjectClaudeDir 'skills\safety-scan\scripts\safety-scan.sh'
 
-    New-Item -ItemType Directory -Force -Path $scriptsDst | Out-Null
-    Copy-Item -Force -Path $scriptSrc -Destination (Join-Path $scriptsDst 'safety-scan.sh')
-    Write-Info "safety-scan.sh をインストールしました: $scriptsDst\safety-scan.sh"
+function Install-CodexSkills {
+    $src = Join-Path $ProjectClaudeDir 'skills'
+    $dst = Join-Path $CodexDir 'skills'
+
+    if (-not (Test-Path $src)) { return }
+
+    New-Item -ItemType Directory -Force -Path $dst | Out-Null
+
+    foreach ($skillDir in Get-ChildItem -Path $src -Directory) {
+        $name = $skillDir.Name
+        $target = Join-Path $dst $name
+
+        if (Test-Path $target) {
+            Write-Warn "Codex スキル '$name' は既に存在します。上書きします..."
+            Remove-Item -Recurse -Force $target
+        } else {
+            Write-Info "Codex スキル '$name' をインストールします..."
+        }
+        Copy-Item -Recurse -Path $skillDir.FullName -Destination $dst
+
+        # SKILL.md 内の ~/.claude/skills/ を ~/.codex/skills/ に書き換え
+        $skillMd = Join-Path $target 'SKILL.md'
+        if (Test-Path $skillMd) {
+            (Get-Content $skillMd -Raw) `
+                -replace '~/\.claude/skills/', '~/.codex/skills/' |
+                Set-Content $skillMd -NoNewline
+        }
+
+        Write-Info "  -> $target"
+    }
 }
 
 function Install-CodexConfig {
@@ -306,8 +330,8 @@ Install-Commands
 Install-Agents
 Install-Settings
 Install-ReviewConfig
-Install-SafetyScan
 Install-CopyReviewHook
+Install-CodexSkills
 Install-CodexConfig
 Install-CodexHooks
 
