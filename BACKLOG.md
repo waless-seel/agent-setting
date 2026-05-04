@@ -31,11 +31,13 @@
 
 ## Codex 対応
 
-- [ ] **Claude Code スキルの Codex 移植**
+- [x] **Claude Code スキルの Codex 移植**
   - 概要: `src/skills/` の各スキルを Codex のスキル形式（`~/.codex/skills/` 以下）に変換・配布
-  - 事前確認: Codex のグローバルスキルパスとフォーマット（YAML/Markdown）を公式ドキュメントで確認
-  - 対象スキル候補: commit / safety-scan / review-thinking / aggregate-reviews
-  - setup.ps1 / setup.sh に `Install-CodexSkills` 関数を追加
+  - 対象: commit / safety-scan（review-thinking・aggregate-reviews は Claude Code 固有依存のため除外）
+  - setup.ps1 / setup.sh に `Install-CodexSkills` 関数を追加（インストール時に SKILL.md パスを置換）
+  - commit スキルの Co-Authored-By を `Ai-Generated: true`（git trailer、ベンダー非依存）に変更
+  - safety-scan スキルのスクリプト参照をスキル同梱パスに修正し `Install-SafetyScan` を削除
+  - 対応: commit `9540835` (2026-05-04)
 
 ## aggregate-reviews 改善
 
