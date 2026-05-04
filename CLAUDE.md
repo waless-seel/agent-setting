@@ -1,1 +1,1 @@
-reference ./AGENTS.md
+@AGENTS.md
