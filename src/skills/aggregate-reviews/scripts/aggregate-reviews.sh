@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # aggregate-reviews.sh
 # session-reviews に蓄積されたレビューの [REVIEW-META] を集積し、
-# thinking.md の各セクションを抽出して構造化出力する
+# thinking.md と reproduce.* から改善候補の材料を構造化出力する
 #
 # 使い方:
 #   bash aggregate-reviews.sh --dest DIR [--since YYYY-MM-DD] [--project NAME]
-#                              [--sections meta,rules,proposals,decisions]
+#                              [--sections meta,rules,proposals,decisions,reproduce]
 #
 # インストール先: ~/.claude/scripts/aggregate-reviews.sh
 #
@@ -34,6 +34,10 @@
 #   ...
 #   ===DECISIONS-END===
 #
+#   ===REPRODUCE-START:slug===
+#   ...
+#   ===REPRODUCE-END===
+#
 #   ===AGGREGATE-END===
 #
 # 終了コード: 0=正常, 1=dest未存在またはレビュー0件
@@ -43,7 +47,7 @@ set -euo pipefail
 DEST=""
 SINCE=""
 PROJECT_FILTER=""
-SECTIONS="meta,rules,proposals,decisions"
+SECTIONS="meta,rules,proposals,decisions,reproduce"
 
 # --- 引数解析 ---
 while [[ $# -gt 0 ]]; do
@@ -96,6 +100,23 @@ extract_section() {
   ' "$file"
 }
 
+# --- reproduce.* から自動化素材になりやすい行を抽出 ---
+extract_reproduce_clues() {
+  local file="$1"
+  awk '
+    /^# \[REVIEW-META\]/ { in_meta=1; next }
+    in_meta && /^# =+/ { in_meta=0; next }
+    in_meta { next }
+    /^$/ { next }
+    /^#!/ { next }
+    /^set -/ { next }
+    /^# --- Step / { print; next }
+    /^# \[(背景|プロンプト|期待出力|判断基準|結果|思考|LLM実行|要人間判断)\]/ { print; next }
+    /^[[:space:]]*#/ { next }
+    { print }
+  ' "$file"
+}
+
 # --- レビュー収集 ---
 REVIEW_COUNT=0
 declare -a slugs=()
@@ -104,6 +125,7 @@ declare -a outcomes=()
 declare -a projects=()
 declare -a tags=()
 declare -a dirs=()
+declare -a reproduce_files=()
 
 while IFS= read -r reproduce_file; do
   [[ -f "$reproduce_file" ]] || continue
@@ -132,6 +154,7 @@ while IFS= read -r reproduce_file; do
   projects+=("$rev_project")
   tags+=("$rev_tags")
   dirs+=("$local_dir")
+  reproduce_files+=("$reproduce_file")
   REVIEW_COUNT=$((REVIEW_COUNT + 1))
 
 done < <(find "$DEST" -maxdepth 2 -name "reproduce.*" | sort)
@@ -188,6 +211,13 @@ for i in "${!slugs[@]}"; do
     echo "===DECISIONS-START:${slug}==="
     extract_section "$thinking_file" "## 意思決定ログ"
     echo "===DECISIONS-END==="
+    echo ""
+  fi
+
+  if has_section "reproduce"; then
+    echo "===REPRODUCE-START:${slug}==="
+    extract_reproduce_clues "${reproduce_files[$i]}"
+    echo "===REPRODUCE-END==="
     echo ""
   fi
 
