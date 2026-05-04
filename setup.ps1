@@ -161,16 +161,16 @@ function Install-GlobalClaudeMd {
     }
 }
 
-function Install-Rules {
-    $src = Join-Path $ProjectClaudeDir 'rules'
+function Install-Knowledge {
+    $src = Join-Path $ProjectClaudeDir 'knowledge'
 
     if (-not (Test-Path $src)) { return }
 
-    foreach ($dst in @((Join-Path $UserClaudeDir 'rules'), (Join-Path $CodexDir 'rules'))) {
+    foreach ($dst in @((Join-Path $UserClaudeDir 'knowledge'), (Join-Path $CodexDir 'knowledge'))) {
         New-Item -ItemType Directory -Force -Path $dst | Out-Null
         foreach ($file in Get-ChildItem -Path $src -Filter '*.md') {
             Copy-Item -Force -Path $file.FullName -Destination $dst
-            Write-Info "ルール '$($file.Name)' をインストールしました -> $(Join-Path $dst $file.Name)"
+            Write-Info "ナレッジ '$($file.Name)' をインストールしました -> $(Join-Path $dst $file.Name)"
         }
     }
 }
@@ -306,7 +306,7 @@ New-Item -ItemType Directory -Force -Path $UserClaudeDir | Out-Null
 
 Install-Skills
 Install-GlobalClaudeMd
-Install-Rules
+Install-Knowledge
 Install-Commands
 Install-Agents
 Install-Settings

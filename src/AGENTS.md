@@ -16,6 +16,6 @@
 
 Git・シェルスクリプト・フックに関するルールは、作業内容に応じて以下を適宜参照すること:
 
-- `rules/git.md` — Git ワークフロールール
-- `rules/shell.md` — シェル/PowerShell ベストプラクティス
-- `rules/hook.md` — フックのテスト方法・ライフサイクル
+- `knowledge/git.md` — Git ワークフロールール
+- `knowledge/shell.md` — シェル/PowerShell ベストプラクティス
+- `knowledge/hook.md` — フックのテスト方法・ライフサイクル

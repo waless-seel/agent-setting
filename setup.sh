@@ -129,22 +129,22 @@ install_global_claude_md() {
   fi
 }
 
-# src/rules/*.md を ~/.claude/rules/ と ~/.codex/rules/ にインストール
-install_rules() {
-  local src="$PROJECT_CLAUDE_DIR/rules"
+# src/knowledge/*.md を ~/.claude/knowledge/ と ~/.codex/knowledge/ にインストール
+install_knowledge() {
+  local src="$PROJECT_CLAUDE_DIR/knowledge"
 
   if [[ ! -d "$src" ]]; then
     return 0
   fi
 
-  for dst in "$USER_CLAUDE_DIR/rules" "$CODEX_DIR/rules"; do
+  for dst in "$USER_CLAUDE_DIR/knowledge" "$CODEX_DIR/knowledge"; do
     mkdir -p "$dst"
-    for rule_file in "$src"/*.md; do
-      [[ -f "$rule_file" ]] || continue
+    for file in "$src"/*.md; do
+      [[ -f "$file" ]] || continue
       local name
-      name="$(basename "$rule_file")"
-      cp "$rule_file" "$dst/$name"
-      info "ルール '$name' をインストールしました -> $dst/$name"
+      name="$(basename "$file")"
+      cp "$file" "$dst/$name"
+      info "ナレッジ '$name' をインストールしました -> $dst/$name"
     done
   done
 }
@@ -342,7 +342,7 @@ main() {
 
   install_skills
   install_global_claude_md
-  install_rules
+  install_knowledge
   install_commands
   install_agents
   install_settings
