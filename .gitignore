@@ -17,6 +17,11 @@
 # sesion review
 reviews/
 
+# graphify
+.graphify_python
+.graphify_incremental.json
+graphify-out/
+
 #--------
 
 # OS系
