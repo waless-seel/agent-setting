@@ -29,6 +29,14 @@
   - 参照: aggregate-2026-03-09.md セクション F
   - 却下: create-git-wiki と異なり Claude が構造ガイドを動的に読んで生成するためトークン節約効果が薄い。運用パターンも未確立で判断時期尚早。
 
+## Codex 対応
+
+- [ ] **Claude Code スキルの Codex 移植**
+  - 概要: `src/skills/` の各スキルを Codex のスキル形式（`~/.codex/skills/` 以下）に変換・配布
+  - 事前確認: Codex のグローバルスキルパスとフォーマット（YAML/Markdown）を公式ドキュメントで確認
+  - 対象スキル候補: commit / safety-scan / review-thinking / aggregate-reviews
+  - setup.ps1 / setup.sh に `Install-CodexSkills` 関数を追加
+
 ## aggregate-reviews 改善
 
 - [x] **却下ルールの再登場抑止の仕組みを検討**
