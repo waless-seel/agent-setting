@@ -6,8 +6,9 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$ProjectClaudeDir = Join-Path $ScriptDir 'claude'
+$ProjectClaudeDir = Join-Path $ScriptDir 'src'
 $UserClaudeDir = Join-Path $HOME '.claude'
+$CodexDir = Join-Path $HOME '.codex'
 
 function Write-Info  { param($msg) Write-Host "[INFO] $msg" -ForegroundColor Green }
 function Write-Warn  { param($msg) Write-Host "[WARN] $msg" -ForegroundColor Yellow }
@@ -152,19 +153,25 @@ function Install-GlobalClaudeMd {
 
     Copy-Item -Force -Path $src -Destination $dst
     Write-Info "CLAUDE.md をインストールしました: $dst"
+
+    $agentsSrc = Join-Path $ProjectClaudeDir 'AGENTS.md'
+    if (Test-Path $agentsSrc) {
+        Copy-Item -Force -Path $agentsSrc -Destination (Join-Path $UserClaudeDir 'AGENTS.md')
+        Write-Info "AGENTS.md をインストールしました: $(Join-Path $UserClaudeDir 'AGENTS.md')"
+    }
 }
 
 function Install-Rules {
     $src = Join-Path $ProjectClaudeDir 'rules'
-    $dst = Join-Path $UserClaudeDir 'rules'
 
     if (-not (Test-Path $src)) { return }
 
-    New-Item -ItemType Directory -Force -Path $dst | Out-Null
-
-    foreach ($file in Get-ChildItem -Path $src -Filter '*.md') {
-        Copy-Item -Force -Path $file.FullName -Destination $dst
-        Write-Info "ルール '$($file.Name)' をインストールしました -> $(Join-Path $dst $file.Name)"
+    foreach ($dst in @((Join-Path $UserClaudeDir 'rules'), (Join-Path $CodexDir 'rules'))) {
+        New-Item -ItemType Directory -Force -Path $dst | Out-Null
+        foreach ($file in Get-ChildItem -Path $src -Filter '*.md') {
+            Copy-Item -Force -Path $file.FullName -Destination $dst
+            Write-Info "ルール '$($file.Name)' をインストールしました -> $(Join-Path $dst $file.Name)"
+        }
     }
 }
 
@@ -175,6 +182,68 @@ function Install-SafetyScan {
     New-Item -ItemType Directory -Force -Path $scriptsDst | Out-Null
     Copy-Item -Force -Path $scriptSrc -Destination (Join-Path $scriptsDst 'safety-scan.sh')
     Write-Info "safety-scan.sh をインストールしました: $scriptsDst\safety-scan.sh"
+}
+
+function Install-CodexConfig {
+    New-Item -ItemType Directory -Force -Path $CodexDir | Out-Null
+
+    $agentsSrc = Join-Path $ProjectClaudeDir 'AGENTS.md'
+    if (Test-Path $agentsSrc) {
+        Copy-Item -Force -Path $agentsSrc -Destination (Join-Path $CodexDir 'AGENTS.md')
+        Write-Info "Codex: AGENTS.md をインストールしました: $(Join-Path $CodexDir 'AGENTS.md')"
+    }
+
+    $configSrc = Join-Path $ProjectClaudeDir 'codex\config.toml'
+    if (-not (Test-Path $configSrc)) { return }
+
+    $configDst = Join-Path $CodexDir 'config.toml'
+    if (Test-Path $configDst) {
+        Write-Warn "Codex: config.toml は既に存在するためスキップします: $configDst"
+        Write-Warn "手動でマージしてください: $configSrc"
+    } else {
+        Copy-Item -Force -Path $configSrc -Destination $configDst
+        Write-Info "Codex: config.toml をインストールしました: $configDst"
+    }
+}
+
+function Install-CodexHooks {
+    $src = Join-Path $ProjectClaudeDir 'codex\hooks.json'
+    if (-not (Test-Path $src)) { return }
+
+    New-Item -ItemType Directory -Force -Path $CodexDir | Out-Null
+    $dst = Join-Path $CodexDir 'hooks.json'
+
+    $pyScript = @'
+import sys, json, os
+
+src_path = sys.argv[1]
+dst_path = sys.argv[2]
+
+with open(src_path, 'r', encoding='utf-8') as f:
+    src = json.load(f)
+
+if os.path.exists(dst_path):
+    with open(dst_path, 'r', encoding='utf-8') as f:
+        dst = json.load(f)
+else:
+    dst = {}
+
+for event, handlers in src.get("hooks", {}).items():
+    dst.setdefault("hooks", {}).setdefault(event, [])
+    existing_cmds = {h.get("command") for h in dst["hooks"][event]}
+    for h in handlers:
+        if h.get("command") not in existing_cmds:
+            dst["hooks"][event].append(h)
+
+with open(dst_path, 'w', encoding='utf-8') as f:
+    json.dump(dst, f, indent=2, ensure_ascii=False)
+    f.write('\n')
+
+print(f"[INFO] Codex hooks をインストールしました: {dst_path}", file=sys.stderr)
+'@
+
+    $pyScript | python3 - $src $dst
+    Write-Info "Codex: フック登録完了"
 }
 
 function Install-CopyReviewHook {
@@ -244,9 +313,12 @@ Install-Settings
 Install-ReviewConfig
 Install-SafetyScan
 Install-CopyReviewHook
+Install-CodexConfig
+Install-CodexHooks
 
 Write-Host ''
 Write-Info 'セットアップ完了！'
 Write-Host ''
 Write-Host "インストールされた内容を確認するには:"
 Write-Host "  Get-ChildItem $UserClaudeDir\skills\"
+Write-Host "  Get-ChildItem $CodexDir\"

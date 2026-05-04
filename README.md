@@ -1,6 +1,8 @@
 # agent-setting
 
-A configuration management repository for Claude Code — version-controls custom skills, hooks, and scripts, and installs them on any machine with a single command.
+A configuration management repository for AI coding agents — version-controls custom skills, hooks, and scripts, and installs them on any machine with a single command.
+
+Supports **Claude Code** (`~/.claude/`) and **Codex CLI** (`~/.codex/`) from a single `src/` source directory.
 
 [日本語版 README](README.ja.md)
 

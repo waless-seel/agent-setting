@@ -5,8 +5,9 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_CLAUDE_DIR="$SCRIPT_DIR/claude"
+PROJECT_CLAUDE_DIR="$SCRIPT_DIR/src"
 USER_CLAUDE_DIR="$HOME/.claude"
+CODEX_DIR="$HOME/.codex"
 
 # カラー出力
 GREEN='\033[0;32m'
@@ -107,7 +108,8 @@ install_settings() {
   fi
 }
 
-# claude/CLAUDE.md を ~/.claude/CLAUDE.md にインストール
+# src/CLAUDE.md を ~/.claude/CLAUDE.md にインストール
+# src/AGENTS.md を ~/.claude/AGENTS.md にもコピー
 install_global_claude_md() {
   local src="$PROJECT_CLAUDE_DIR/CLAUDE.md"
   local dst="$USER_CLAUDE_DIR/CLAUDE.md"
@@ -119,26 +121,98 @@ install_global_claude_md() {
 
   cp "$src" "$dst"
   info "CLAUDE.md をインストールしました: $dst"
+
+  local agents_src="$PROJECT_CLAUDE_DIR/AGENTS.md"
+  if [[ -f "$agents_src" ]]; then
+    cp "$agents_src" "$USER_CLAUDE_DIR/AGENTS.md"
+    info "AGENTS.md をインストールしました: $USER_CLAUDE_DIR/AGENTS.md"
+  fi
 }
 
-# claude/rules/*.md を ~/.claude/rules/ にインストール
+# src/rules/*.md を ~/.claude/rules/ と ~/.codex/rules/ にインストール
 install_rules() {
   local src="$PROJECT_CLAUDE_DIR/rules"
-  local dst="$USER_CLAUDE_DIR/rules"
 
   if [[ ! -d "$src" ]]; then
     return 0
   fi
 
-  mkdir -p "$dst"
-
-  for rule_file in "$src"/*.md; do
-    [[ -f "$rule_file" ]] || continue
-    local name
-    name="$(basename "$rule_file")"
-    cp "$rule_file" "$dst/$name"
-    info "ルール '$name' をインストールしました -> $dst/$name"
+  for dst in "$USER_CLAUDE_DIR/rules" "$CODEX_DIR/rules"; do
+    mkdir -p "$dst"
+    for rule_file in "$src"/*.md; do
+      [[ -f "$rule_file" ]] || continue
+      local name
+      name="$(basename "$rule_file")"
+      cp "$rule_file" "$dst/$name"
+      info "ルール '$name' をインストールしました -> $dst/$name"
+    done
   done
+}
+
+# src/AGENTS.md と src/codex/config.toml を ~/.codex/ にインストール
+install_codex_config() {
+  local agents_src="$PROJECT_CLAUDE_DIR/AGENTS.md"
+  local config_src="$PROJECT_CLAUDE_DIR/codex/config.toml"
+
+  mkdir -p "$CODEX_DIR"
+
+  if [[ -f "$agents_src" ]]; then
+    cp "$agents_src" "$CODEX_DIR/AGENTS.md"
+    info "Codex: AGENTS.md をインストールしました: $CODEX_DIR/AGENTS.md"
+  fi
+
+  if [[ ! -f "$config_src" ]]; then
+    return 0
+  fi
+
+  if [[ -f "$CODEX_DIR/config.toml" ]]; then
+    warn "Codex: config.toml は既に存在するためスキップします: $CODEX_DIR/config.toml"
+    warn "手動でマージしてください: $config_src"
+  else
+    cp "$config_src" "$CODEX_DIR/config.toml"
+    info "Codex: config.toml をインストールしました: $CODEX_DIR/config.toml"
+  fi
+}
+
+# src/codex/hooks.json を ~/.codex/hooks.json にマージ
+install_codex_hooks() {
+  local src="$PROJECT_CLAUDE_DIR/codex/hooks.json"
+  local dst="$CODEX_DIR/hooks.json"
+
+  if [[ ! -f "$src" ]]; then
+    return 0
+  fi
+
+  mkdir -p "$CODEX_DIR"
+
+  python3 - "$src" "$dst" << 'PYEOF'
+import sys, json, os
+
+src_path = sys.argv[1]
+dst_path = sys.argv[2]
+
+with open(src_path, 'r', encoding='utf-8') as f:
+    src = json.load(f)
+
+if os.path.exists(dst_path):
+    with open(dst_path, 'r', encoding='utf-8') as f:
+        dst = json.load(f)
+else:
+    dst = {}
+
+for event, handlers in src.get("hooks", {}).items():
+    dst.setdefault("hooks", {}).setdefault(event, [])
+    existing_cmds = {h.get("command") for h in dst["hooks"][event]}
+    for h in handlers:
+        if h.get("command") not in existing_cmds:
+            dst["hooks"][event].append(h)
+
+with open(dst_path, 'w', encoding='utf-8') as f:
+    json.dump(dst, f, indent=2, ensure_ascii=False)
+    f.write('\n')
+
+print(f"[INFO] Codex hooks をインストールしました: {dst_path}", file=sys.stderr)
+PYEOF
 }
 
 # copy-review.sh をインストールし、~/.claude/settings.json にフックを登録する
@@ -274,12 +348,15 @@ main() {
   install_settings
   install_review_config
   install_copy_review_hook
+  install_codex_config
+  install_codex_hooks
 
   echo ""
   info "セットアップ完了！"
   echo ""
   echo "インストールされた内容を確認するには:"
   echo "  ls $USER_CLAUDE_DIR/skills/"
+  echo "  ls $CODEX_DIR/"
 }
 
 main "$@"

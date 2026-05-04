@@ -1,0 +1,9 @@
+# Codex CLI グローバル設定
+# 詳細スキーマ: https://github.com/openai/codex
+
+# 使用モデル（o4-mini / o3 / gpt-4o 等）
+model = "o4-mini"
+
+[shell_environment_policy]
+# "none" | "core" | "all"
+inherit = "core"
