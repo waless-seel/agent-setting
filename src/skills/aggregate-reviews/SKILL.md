@@ -180,10 +180,14 @@ wc -l {agent-setting-path}/claude/skills/*/SKILL.md
 ### 5-1: CLAUDE.md への追記（ルール恒久化）
 
 B で生成した草案をユーザーに提示:
-> 「以下のルールを `{agent-setting-path}/CLAUDE.md` に追記しますか？
+> 「以下のルールを `{agent-setting-path}/src/CLAUDE.md` または `{agent-setting-path}/src/knowledge/*.md` に追記しますか？
 >   {草案内容}」
 
-承認時: `{agent-setting-path}/CLAUDE.md` を Edit ツールで追記。
+承認時:
+- `{agent-setting-path}/src/CLAUDE.md` または `{agent-setting-path}/src/knowledge/*.md` を Edit ツールで追記する
+- `{agent-setting-path}` で `setup.sh` または `setup.ps1` を実行し、`~/.claude/` / `~/.codex/` へインストールする
+
+**禁止:** `~/.claude/` や `~/.codex/` を直接編集しない。これらは agent-setting リポジトリの `src/` から生成されるインストール先であり、直接編集は次回 setup で失われる。
 
 **却下時:**
 `{dest}/rejected-rules.md` に以下を追記する:
@@ -218,12 +222,14 @@ C・E の未反映提案をユーザーに1件ずつ提示:
 >   {改修内容}」
 
 承認時:
-- 対象ファイルを `{agent-setting-path}/claude/skills/{skill-name}/SKILL.md` に解決して Edit ツールで修正する
+- 対象ファイルを `{agent-setting-path}/src/skills/{skill-name}/SKILL.md` に解決して Edit ツールで修正する
   - `{agent-setting-path}` は Step 1 で取得済みの値を使用する
 - 編集後、インストール先に同期する:
   ```bash
-  cp {agent-setting-path}/claude/skills/{skill}/SKILL.md ~/.claude/skills/{skill}/SKILL.md
+  cd {agent-setting-path}
+  ./setup.sh
   ```
+  Windows PowerShell では `.\setup.ps1` を実行する。
 - 提案元の `{dest}/{slug}/thinking.md` を Edit し、当該提案行の `反映状況` セルを `反映済み（{YYYY-MM-DD}）` に更新する
 
 ### 5-4: 新規スキル・スクリプトの追加
