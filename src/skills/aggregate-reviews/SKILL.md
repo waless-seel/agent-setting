@@ -29,7 +29,7 @@ cat ~/.claude/review-thinking.config
 
 `agent-setting-path` の妥当性確認:
 ```bash
-ls {agent-setting-path}/claude/skills/
+ls {agent-setting-path}/src/skills/
 ```
 失敗する場合は「パスが正しくない可能性があります。`agent-setting-path:` を確認してください」と案内して停止。
 
@@ -54,19 +54,19 @@ bash ~/.claude/scripts/aggregate-reviews.sh --dest {dest}
 - プロジェクト別件数
 - 「〇〇フェーズ」など文脈的な解釈
 
-### B. ルール成熟度（CLAUDE.md 追記草案）
+### B. ルール成熟度（AGENTS.md 追記草案）
 
 まず `{dest}/rejected-rules.md` を確認する（ファイルが存在する場合）。
 存在する場合はその内容を読み込み、以下のルール提案から**意味的に一致するものを除外**する（完全一致不要、同じ意図・内容であれば除外）。
 
 `===RULES-START:*===` ブロックを横断して:
-- 複数セッションで同じパターンが登場するルール → **CLAUDE.md 追記草案**を生成
+- 複数セッションで同じパターンが登場するルール → **AGENTS.md 追記草案**を生成
 - 確信度「高」のルール → 即時昇格候補
 - 確信度「中」以下 → 「要観察」として記録
 
 草案フォーマット:
 ```
-# 追記草案（{agent-setting-path}/CLAUDE.md）
+# 追記草案（{agent-setting-path}/src/AGENTS.md）
 - {ルール内容}（根拠: {slug1}, {slug2}）
 ```
 
@@ -103,9 +103,9 @@ C の未反映提案 + D のパターンを統合して:
 - 既存のスクリプト・スキル・ルールで吸収済みのものは重複提案しない
 
 ### G. トークン最適化提案
-`{agent-setting-path}/claude/skills/` 配下の全 SKILL.md を確認:
+`{agent-setting-path}/src/skills/` 配下の全 SKILL.md を確認:
 ```bash
-wc -l {agent-setting-path}/claude/skills/*/SKILL.md
+wc -l {agent-setting-path}/src/skills/*/SKILL.md
 ```
 - 行数が多い SKILL.md → スクリプト化できる決定的ロジックの特定
 - SKILL.md 内に `if`/条件分岐/ループ相当の記述 → スクリプト移行候補として提示
@@ -132,7 +132,7 @@ wc -l {agent-setting-path}/claude/skills/*/SKILL.md
 ## A. タグ・アウトカム傾向
 （頻度集計・解釈）
 
-## B. CLAUDE.md 追記草案（ルール昇格候補）
+## B. AGENTS.md 追記草案（ルール昇格候補）
 （草案。Step 5 で承認時に実際に追記）
 
 ## C. 未反映改善提案
@@ -159,7 +159,7 @@ wc -l {agent-setting-path}/claude/skills/*/SKILL.md
 ## I. キュー投入候補
 | 優先度 | タイトル | 対象 | 根拠 | 処理方針 |
 |------|--------|------|------|----------|
-| HIGH | CLAUDE.md へ {ルール} を追記 | {対象ファイル} | {slug} | 即時実施 / BACKLOG化 / 却下 / 保留 |
+| HIGH | AGENTS.md へ {ルール} を追記 | {対象ファイル} | {slug} | 即時実施 / BACKLOG化 / 却下 / 保留 |
 | HIGH | {未反映提案} を反映 | {対象ファイル} | {slug} | 即時実施 / BACKLOG化 / 却下 / 保留 |
 | MED | {スキル} の {ロジック} をスクリプト化 | {対象ファイル} | {slug} | 即時実施 / BACKLOG化 / 却下 / 保留 |
 | MED | reproduce.* 由来の {資産化候補} | {対象ファイルまたは新規スクリプト/スキル} | {slug} | 即時実施 / BACKLOG化 / 却下 / 保留 |
@@ -177,14 +177,14 @@ wc -l {agent-setting-path}/claude/skills/*/SKILL.md
 
 ## Step 5: アクション確認（影響小→大の順）
 
-### 5-1: CLAUDE.md への追記（ルール恒久化）
+### 5-1: AGENTS.md への追記（ルール恒久化）
 
 B で生成した草案をユーザーに提示:
-> 「以下のルールを `{agent-setting-path}/src/CLAUDE.md` または `{agent-setting-path}/src/knowledge/*.md` に追記しますか？
+> 「以下のルールを `{agent-setting-path}/src/AGENTS.md` または `{agent-setting-path}/src/knowledge/*.md` に追記しますか？
 >   {草案内容}」
 
 承認時:
-- `{agent-setting-path}/src/CLAUDE.md` または `{agent-setting-path}/src/knowledge/*.md` を Edit ツールで追記する
+- `{agent-setting-path}/src/AGENTS.md` または `{agent-setting-path}/src/knowledge/*.md` を Edit ツールで追記する
 - `{agent-setting-path}` で `setup.sh` または `setup.ps1` を実行し、`~/.claude/` / `~/.codex/` へインストールする
 
 **禁止:** `~/.claude/` や `~/.codex/` を直接編集しない。これらは agent-setting リポジトリの `src/` から生成されるインストール先であり、直接編集は次回 setup で失われる。
@@ -201,7 +201,7 @@ B で生成した草案をユーザーに提示:
 ```markdown
 # 却下済みルール
 
-aggregate-reviews が提案しても CLAUDE.md に追記しないと判断したルール。
+aggregate-reviews が提案しても AGENTS.md に追記しないと判断したルール。
 次回以降の集計でこれらと意味的に同じ提案は除外する。
 
 ---
